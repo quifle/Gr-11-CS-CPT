@@ -23,7 +23,7 @@ public class GUI extends JFrame implements KeyListener {
     public ArrayList<JLabel> body = new ArrayList<>();
     public int appleCnt = 0;
     boolean run = true;
-    int moveSpeed = 10;
+    int moveSpeed = 50;
     //creating the timer
     Timer moveTimer;
     //setting the images to image icon variables
@@ -32,10 +32,8 @@ public class GUI extends JFrame implements KeyListener {
     public ImageIcon snakeup = new ImageIcon("src/snakeheadup.png");
     public ImageIcon snakedown = new ImageIcon("src/snakeheaddown.png");
     public ImageIcon snakeleft = new ImageIcon("src/snakeheadright.png");
-    private ImageIcon Left = new ImageIcon("src/bodyHor.png");
-    private ImageIcon Right = new ImageIcon("src/bodyHor.png");
-    private ImageIcon Up = new ImageIcon("src/bodyVert.png");
-    private ImageIcon Down = new ImageIcon("src/bodyVert.png");
+    private ImageIcon horizontal = new ImageIcon("src/bodyHor.png");
+    private ImageIcon vertical = new ImageIcon("src/bodyVert.png");
     JLabel apple; // creating a label then setting our icon to it, setting where our apple is then adding it
     public boolean a = true;
 
@@ -43,9 +41,14 @@ public class GUI extends JFrame implements KeyListener {
     GUI() {
         //setting up the actual GUI
             //when you press x it closes
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.out.println("\0");
+            }
+        });
             //sets the size of application
-            this.setSize(862, 887);
+            this.setSize(840, 875);
             //sets the title
             this.setTitle("Score: 0");
             //doesn't let you change the size
@@ -71,7 +74,7 @@ public class GUI extends JFrame implements KeyListener {
             add(label);
             add(playAgainer);
             //creating a timer for the movement of the snake, so that we can see it update, simulating movement
-            moveTimer = new Timer(30, new ActionListener() {
+            moveTimer = new Timer(130, new ActionListener() {
                 @Override
                 //after time above if action is performed, movesnake method is called
                 public void actionPerformed(ActionEvent e) {
@@ -80,7 +83,7 @@ public class GUI extends JFrame implements KeyListener {
             });
             //creating the apple variable, setting an image icon for it, setting the size and bounds, adding it, setting the visibility to true.
             apple = new JLabel(new ImageIcon("src/apple.png"));
-            apple.setBounds(547, 400, 50, 50);
+            apple.setBounds(545, 400, 50, 50);
             this.add(apple);
             setVisible(true);
             this.add(new JLabel());
@@ -175,77 +178,22 @@ public class GUI extends JFrame implements KeyListener {
         boundary();
         //tracking the body to the head. if apple cnt is greater than 0, (there are body parts) run the for loop based on the size of the body. Take the body coordinates, and set the icon depending on it set the location
         if (appleCnt > 0) {
-            for (int i = 1; i < body.size(); i++) {
-                int px = body.get(i).getX();
-                int py = body.get(i).getY();
-                int cx = body.get(i).getX();
-                int cy = body.get(i).getY();
-                if (body.get(i - 1).getIcon() == Left) {
-                    if (body.get(i).getIcon() == Up) {
-                        if (cy == py) body.get(i).setIcon(Left);
-                        else cy -= moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Down) {
-                        if (cy == py) body.get(i).setIcon(Left);
-                        else cy += moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Left) cx -= moveSpeed;
-                }
-                if (body.get(i - 1).getIcon() == Right) {
-                    if (body.get(i).getIcon() == Up) {
-                        if (cy == py) body.get(i).setIcon(Right);
-                        else cy -= moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Down) {
-                        if (cy == py) body.get(i).setIcon(Right);
-                        else cy += moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Right) cx += moveSpeed;
-                }
-                if (body.get(i - 1).getIcon() == Up) {
-                    if (body.get(i).getIcon() == Left) {
-                        if (cx == px) body.get(i).setIcon(Up);
-                        else cx -= moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Right) {
-                        if (cx == px) body.get(i).setIcon(Up);
-                        else cx += moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Up) cy -= moveSpeed;
-                }
-                if (body.get(i - 1).getIcon() == Down) {
-                    if (body.get(i).getIcon() == Left) {
-                        if (cx == px) body.get(i).setIcon(Down);
-                        else cx -= moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Right) {
-                        if (cx == px) body.get(i).setIcon(Down);
-                        else cx += moveSpeed;
-                    }
-                    if (body.get(i).getIcon() == Up) cy += moveSpeed;
-                }
-                System.out.println(cx + " " + cy);
-                body.get(i).setLocation(cx,cy);
+            for (int i = body.size() - 1; i > 0; i--) {
+                int px = body.get(i-1).getX();
+                int py = body.get(i-1).getY();
+                if (body.get(i - 1).getIcon() == horizontal) body.get(i).setIcon(horizontal);
+                if (body.get(i - 1).getIcon() == vertical) body.get(i).setIcon(vertical);
+                body.get(i).setLocation(px,py);
             }
             //if the body size is greater than 0, ser the location to the x and y of the head. This is specifically for the body after the head. If the label is left or right set the body to horizontal, but if its up or down itll be vertical.
             if (body.size() > 0) {
                 body.get(0).setLocation(label.getX(), label.getY());
-                if (label.getIcon() == snakeleft) {
-                    body.get(0).setIcon(Left);
-                    body.get(0).setLocation(label.getX() + 40, label.getY());
-                }
-                if (label.getIcon() == snakedown) {
-                    body.get(0).setIcon(Down);
-                    body.get(0).setLocation(label.getX(), label.getY() - 40);
-                }
-                if (label.getIcon() == snakeright) {
-                    body.get(0).setIcon(Right);
-                    body.get(0).setLocation(label.getX() - 40, label.getY());
-                }
-                if (label.getIcon() == snakeup) {
-                    body.get(0).setIcon(Up);
-                    body.get(0).setLocation(label.getX(), label.getY() + 40);
-                }
+                    if (label.getIcon() == snakeleft || label.getIcon() == snakeright) {
+                        body.get(0).setIcon(horizontal);
+                    }
+                    if (label.getIcon() == snakedown || label.getIcon() == snakeup) {
+                        body.get(0).setIcon(vertical);
+                    }
             }
         }
         //useless stuff now. made so that it checked if it was possible to turn, when the movement was smooth. This meant you couldnt move between the lines. We changed movement speed to 50 now so it doesnt matter, because it makes the body spawn properly
@@ -293,19 +241,15 @@ public class GUI extends JFrame implements KeyListener {
 // add body method
     public void addBody() {
         // if the last direction is left or right, add a horizontal body. if its is up or down, add a vertical body. set the size of it as well as the bounds.
-        if (lastDirection == 1) body.add(new JLabel(Left));
-        if (lastDirection == 2) body.add(new JLabel(Up));
-        if (lastDirection == 3) body.add(new JLabel(Right));
-        if (lastDirection == 4) body.add(new JLabel(Down));
-        //adding it
-        if (appleCnt == 1) {
+        if (lastDirection == 1 || lastDirection == 3) {
+            body.add(new JLabel(horizontal));
             body.get(appleCnt - 1).setBounds(-50, -50, 50, 50);
-        } else {
-            if (lastDirection == 1) body.get(appleCnt - 1).setBounds(body.get(appleCnt-2).getX()+50, body.get(appleCnt-2).getY(), 50, 50);
-            if (lastDirection == 2) body.get(appleCnt - 1).setBounds(body.get(appleCnt-2).getX(), body.get(appleCnt-2).getY()+50, 50, 50);
-            if (lastDirection == 3) body.get(appleCnt - 1).setBounds(body.get(appleCnt-2).getX()-50, body.get(appleCnt-2).getY(), 50, 50);
-            if (lastDirection == 4) body.get(appleCnt - 1).setBounds(body.get(appleCnt-2).getX(), body.get(appleCnt-2).getX()-50, 50, 50);
         }
+        if (lastDirection == 2 || lastDirection == 4) {
+            body.add(new JLabel(vertical));
+            body.get(appleCnt - 1).setBounds(-50, -50, 50, 50);
+        }
+        //adding it
         this.add(body.get(appleCnt - 1));
     }
     //setting up the boundaries of the JFrame, so that we don't just enter the void that is outside. Trigger the death method, when you reach a certain x or y value, ending the code.
@@ -341,7 +285,6 @@ public class GUI extends JFrame implements KeyListener {
     }
 //Death method. Turns off the timer, sets the death screen on, turns run to false, and sets replay to true.
     public void death() {
-        moveTimer.stop();
         playAgainer.setVisible(true);
         run = false;
         replay = true;
@@ -361,7 +304,6 @@ public class GUI extends JFrame implements KeyListener {
         run = true;
         label.setIcon(snakeright);
         playAgainer.setVisible(false);
-        this.setTitle("Score: 0");
     }
 //create two variables, which will later be used a lot. If there is a body, get the x of the label and y of the label as well as the x of the apple and y of the apple. If the match to a degree, run the following"
     //Set the aplx and aply to random numbers, which will then be inputted as the x and y value fo the apple.
@@ -405,7 +347,7 @@ public class GUI extends JFrame implements KeyListener {
     //reset the apple location and stuff like the bounds and visibility
     public void appleSetup(int aplx, int aply) {
         apple.setVisible(false);
-        apple.setBounds(aplx - 3, aply, 50, 50);
+        apple.setBounds(aplx - 5, aply, 50, 50);
         apple.setVisible(true);
         appleCnt++;
         addBody();
@@ -413,4 +355,3 @@ public class GUI extends JFrame implements KeyListener {
         this.setTitle("Score: " + ab);
     }
 }
-
