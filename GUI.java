@@ -41,7 +41,7 @@ public class GUI extends JFrame implements KeyListener {
     GUI() {
         //setting up the actual GUI
             //when you press x it closes
-        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.out.println("\0");
